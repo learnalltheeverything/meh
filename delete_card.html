@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete card</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <form id="form" method="delete" action="view_deck.html?uuid=">
+        <p>Are you sure?</p>
+        <button type="submit">Yes</button>
+    </form>
+
+    <script>
+        const query = window.location.search;
+        const params = new URLSearchParams(query);
+
+        const uuid = params.get('uuid');
+
+        const parsed = JSON.parse(localStorage.getItem(uuid));
+        const deck = parsed.deck;
+
+        window.addEventListener("submit", event => {
+            event.preventDefault();
+
+            // Delete card
+            localStorage.removeItem(uuid);
+
+            location.href = form.action + deck;
+        })
+
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>

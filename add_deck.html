@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New deck</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <nav>
+        <a href="deck_list.html">Cancel</a>
+    </nav>
+    <form id="form" method="post" action="deck_list.html">
+        <input type="hidden" name="type" value="deck">
+        <input type="text" name="title" placeholder="Title" required>
+        <input type="text" name="description" placeholder="Description">
+        <input type="submit" value="Save">
+    </form>
+
+    <script>
+        window.addEventListener("submit", event => {
+            event.preventDefault();
+
+            const formData = Object.fromEntries(new FormData(form));
+
+            localStorage.setItem(crypto.randomUUID(), JSON.stringify(formData));
+
+            // Redirect
+            location.href = form.action;
+        })
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>

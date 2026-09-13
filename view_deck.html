@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View deck</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="deck_list.html">Deck list</a>
+        </nav>
+        <h1></h1>
+        <p></p>
+        <a rel="edit">Edit</a>
+
+        <hr>
+
+        <a rel="add_card">Add card</a>
+    </header>
+    <template id="card_template">
+        <li>
+            <p class="front"></p>
+            <p class="back"></p>
+            <a href="edit_card.html?uuid=">Edit</a>
+        </li>
+    </template>
+    <main>
+        <ul id="card_list"></ul>
+    </main>
+    <script>
+        const query = window.location.search;
+        const params = new URLSearchParams(query);
+
+        const uuid = params.get('uuid');
+
+        document.querySelector("header a[rel=edit]").href = "edit_deck.html?uuid=" + uuid;
+        document.querySelector("header a[rel=add_card]").href = "add_card.html?deck=" + uuid;
+
+        const parsed = JSON.parse(localStorage.getItem(uuid));
+
+        document.querySelector("h1").textContent = parsed.title;
+        document.querySelector("header p").textContent = parsed.description;
+    </script>
+
+    <script>
+        for ([key, value] of Object.entries(localStorage)) {
+            const parsed = JSON.parse(value);
+            if (parsed.type == "card" && parsed.deck == uuid) {
+                const clone = card_template.content.firstElementChild.cloneNode(true)
+                clone.querySelector(".front").textContent = parsed.front;
+                clone.querySelector(".back").textContent = parsed.back;
+                clone.querySelector("a").href += key;
+
+                card_list.append(clone);
+            }
+        }
+    </script>
+
+    <script src="app.js"></script>
+
+</body>
+</html>

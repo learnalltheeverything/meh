@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New deck</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <nav>
+        <a rel="back" href="view_deck.html?uuid=">Cancel</a>
+    </nav>
+
+    <form id="form" method="post" action="view_deck.html?uuid=">
+        <!-- <input type="hidden" name="uuid"> -->
+        <input type="hidden" name="type" value="deck">
+        <input type="text" name="title" placeholder="Title">
+        <input type="text" name="description" placeholder="Description">
+        <input type="submit" value="Save">
+    </form>
+    <a rel="delete" href="delete_deck.html?uuid=">Delete</a>
+
+    <script>
+        const query = window.location.search;
+        const params = new URLSearchParams(query);
+
+        const uuid = params.get('uuid');
+        //document.querySelector("form [name=uuid]").value = uuid;
+        document.querySelector("a[rel=back]").href += uuid;
+
+        const parsed = JSON.parse(localStorage.getItem(uuid));
+
+        document.querySelector("form [name=title]").value = parsed.title;
+        document.querySelector("form [name=description]").value = parsed.description;
+
+        document.querySelector("a[rel=delete]").href += uuid;
+    </script>
+
+    <script>
+        window.addEventListener("submit", event => {
+            event.preventDefault();
+
+            const formData = Object.fromEntries(new FormData(form));
+
+            localStorage.setItem(uuid, JSON.stringify(formData));
+
+            location.href = form.action + uuid;
+        })
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>

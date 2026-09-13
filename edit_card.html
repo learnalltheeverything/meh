@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit card</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <nav>
+        <a rel="back" href="view_deck.html?uuid=">Cancel</a>
+    </nav>
+
+    <form id="form" method="post" action="view_deck.html?uuid=">
+        <input type="hidden" name="deck">
+        <input type="hidden" name="type" value="card">
+        <textarea name="front"></textarea>
+        <textarea name="back"></textarea>
+        <input type="hidden" name="last_review">
+        <input type="hidden" name="next_review">
+        <input type="submit" value="Save">
+    </form>
+    <a rel="delete" href="delete_card.html?uuid=">Delete</a>
+
+    <script>
+        const query = window.location.search;
+        const params = new URLSearchParams(query);
+
+        const uuid = params.get('uuid');
+        //document.querySelector("form [name=uuid]").value = uuid;
+
+        const parsed = JSON.parse(localStorage.getItem(uuid));
+        const deck = parsed.deck;
+        document.querySelector("a[rel=back]").href += deck;
+
+        document.querySelector("form [name=deck]").value = parsed.deck;
+        document.querySelector("form [name=front]").value = parsed.front;
+        document.querySelector("form [name=back]").value = parsed.back;
+        document.querySelector("form [name=last_review]").value = parsed.last_review;
+        document.querySelector("form [name=next_review]").value = parsed.next_review;
+
+        document.querySelector("a[rel=delete]").href += uuid;
+    </script>
+
+    <script>
+        window.addEventListener("submit", event => {
+            event.preventDefault();
+
+            const formData = Object.fromEntries(new FormData(form));
+
+            localStorage.setItem(uuid, JSON.stringify(formData));
+            
+            location.href = form.action + deck;
+        })
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>

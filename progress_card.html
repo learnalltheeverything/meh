@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress card</title>
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <script>
+        const query = window.location.search;
+        const params = new URLSearchParams(query);
+
+        const uuid = params.get('uuid');
+
+        const parsed = JSON.parse(localStorage.getItem(uuid));
+        
+        const now = Math.floor(Date.now() / 1000);
+        const today = now - (now % 86400);
+        const spacing_factor = 2;
+        const old_gap = parsed.next_review - parsed.last_review;
+        const new_gap = old_gap * spacing_factor;
+
+        parsed.last_review = today;
+        parsed.next_review = today + (new_gap - (new_gap % 86400));
+
+        localStorage.setItem(uuid, JSON.stringify(parsed));
+        
+        location.href = "review_next.html";
+    </script>
+
+    <script src="app.js"></script>
+</body>
+</html>

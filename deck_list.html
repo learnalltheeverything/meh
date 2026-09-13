@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decks</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <h1>Deck list</h1>
+    <a href="add_deck.html">Add deck</a>
+    <template id="deck_template">
+        <li>
+            <a href="view_deck.html?uuid=">
+                <h2></h2>
+                <p></p>
+            </a>
+        </li>
+    </template>
+    <p>Pending review: <span id="pending_review"></span></p>
+    <a href="review_next.html">Review</a>
+
+    <hr>
+
+    <ul id="deck_list">
+
+    </ul>
+
+    <button type="button" onclick="download()">Download eeerrrything...</button>
+
+    <script>
+        for ([key, value] of Object.entries(localStorage)) {
+            const parsed = JSON.parse(value);
+            if (parsed.type == "deck") {
+                const clone = deck_template.content.firstElementChild.cloneNode(true)
+                clone.querySelector("h2").textContent = parsed.title;
+                clone.querySelector("p").textContent = parsed.description;
+                clone.querySelector("a").href += key;
+
+                deck_list.append(clone);
+            }
+        }
+
+        // Count number of pending cards
+        const now = Math.floor(Date.now() / 1000);
+        const pending = []
+        
+        for ([key, value] of Object.entries(localStorage)) {
+            const parsed = JSON.parse(value);
+
+            if (parsed.type == "card" && parsed.next_review < now) {
+
+                parsed.uuid = key;
+                pending.push(parsed);
+            }
+        }
+
+        pending_review.textContent = pending.length;
+
+        // Hide review link maybe if nothing pending
+    </script>
+
+    <script>
+        // Download eeerrything...
+        function download() {
+            const JSONdata = JSON.stringify(localStorage, null, 4);
+            
+            const blob = new Blob([JSONdata], { type: "application/json" });
+            
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            
+            const fileName = window.location.hostname + "-localstorage.json";
+            link.setAttribute("download", fileName);
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        }
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>

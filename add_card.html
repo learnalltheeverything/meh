@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New card</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+</head>
+<body>
+    <nav>
+        <a rel="back" href="view_deck.html?uuid=">Cancel</a>
+    </nav>
+    <form id="form" method="post" action="view_deck.html?uuid=">
+        <input type="hidden" name="deck">
+        <input type="hidden" name="type" value="card">
+        <textarea name="front" placeholder="Front side"></textarea>
+        <textarea name="back" placeholder="Back side"></textarea>
+        <input type="hidden" name="last_review">
+        <input type="hidden" name="next_review">
+        <input type="submit" value="Save">
+    </form>
+
+    <script>
+        const query = window.location.search;
+        const params = new URLSearchParams(query);
+
+        const deck = params.get('deck');
+        document.querySelector("a[rel=back]").href += deck;
+
+        document.querySelector("form [name=deck]").value = deck;
+
+        const now = Math.floor(Date.now() / 1000);
+        const today = now - (now % 86400);
+
+        document.querySelector("form [name=last_review]").value = today;
+        document.querySelector("form [name=next_review]").value = today + 86400;
+
+        window.addEventListener("submit", event => {
+            event.preventDefault();
+
+            const formData = Object.fromEntries(new FormData(form));
+
+            localStorage.setItem(crypto.randomUUID(), JSON.stringify(formData));
+
+            // Redirect
+            location.href = form.action + deck;
+        })
+    </script>
+    <script src="app.js"></script>
+</body>
+</html>

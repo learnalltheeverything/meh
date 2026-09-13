@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="manifest" href="manifest.json">
+    <style>
+        #back {
+            margin-top: 150vh;
+        }
+        main { text-align: right; padding-right: 20px; }
+        a[rel=progress], a[rel=reset] { margin-top: 40px; padding-right: 50px; }
+        a[rel=progress] { padding-bottom: 80px; }
+        a[rel=flip] { position: absolute; bottom: 105px; right: 70px; }
+    </style>
+</head>
+<body>
+    <header>
+        <nav>
+            <a href="deck_list.html">Deck list</a>
+        </nav>
+    </header>
+    <main>
+        <div class="card">
+            <div id="front"></div>
+            <a rel="flip" href="#back">Flip</a>
+            <div id="back"></div>
+        </div>
+        <a rel="reset" href="reset_card.html?uuid=">I forgot</a>
+        <a rel="progress" href="progress_card.html?uuid=">I remember</a>
+    </main>
+    <script>
+        
+        const now = Math.floor(Date.now() / 1000);
+        const pending = []
+        
+        // Get all pending cards
+        for ([key, value] of Object.entries(localStorage)) {
+            const parsed = JSON.parse(value);
+            console.log("parsed: ", parsed);
+            if (parsed.type == "card" && parsed.next_review < now) {
+                console.log("pending: ", parsed);
+                parsed.uuid = key;
+                pending.push(parsed);
+            }
+        }
+        
+        // If no more cards, redirect to deck list
+        if (pending.length == 0)
+        //location.href = "deck_list.html";
+    
+        // Sort cards by most overdue
+        pending.sort((a, b) => b.next_review - a.next_review);
+        const card = pending[0]; // Most urgent
+    
+        document.querySelector("a[rel=progress]").href += card.uuid;
+        document.querySelector("a[rel=reset]").href += card.uuid;
+
+        document.querySelector("#front").textContent += card.front;
+        document.querySelector("#back").textContent += card.back;
+
+    </script>
+
+    <script src="app.js"></script>
+</body>
+</html>
