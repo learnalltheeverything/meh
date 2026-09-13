@@ -35,7 +35,7 @@ self.addEventListener('activate', e => {
       })
     ))
   );
-  self.client.claim();
+  self.clients.claim();
 });
 
 // Fetch Event - Serve from cache, fallback to network
